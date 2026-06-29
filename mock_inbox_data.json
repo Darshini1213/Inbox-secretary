@@ -1,0 +1,23 @@
+{
+  "emails": [
+    {
+      "id": 1,
+      "sender": "manager@work.com",
+      "subject": "Quarterly Report",
+      "body": "Please review the quarterly report draft and reply with your comments."
+    },
+    {
+      "id": 2,
+      "sender": "friend@personal.com",
+      "subject": "Dinner Next Week?",
+      "body": "Are you free for dinner next Tuesday around 7 PM?"
+    },
+    {
+      "id": 3,
+      "sender": "promo@spam.com",
+      "subject": "Buy Coins NOW!",
+      "body": "Get 500% bonus coins when you deposit today!"
+    }
+  ],
+  "calendar": []
+}
