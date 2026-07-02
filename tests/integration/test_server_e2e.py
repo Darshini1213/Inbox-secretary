@@ -69,6 +69,7 @@ def start_server() -> subprocess.Popen[str]:
     ]
     env = os.environ.copy()
     env["INTEGRATION_TEST"] = "TRUE"
+    env["GOOGLE_CLOUD_AGENT_ENGINE_ENABLE_TELEMETRY"] = "FALSE"
     process = subprocess.Popen(
         command,
         stdout=subprocess.PIPE,

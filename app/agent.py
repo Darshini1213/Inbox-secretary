@@ -92,7 +92,7 @@ orchestrator_agent = LlmAgent(
 @node
 async def security_checkpoint(ctx: Context, node_input: str) -> str:
     """Performs PII scrubbing, prompt injection detection, and domain rules validation."""
-    ctx.state.user_request = node_input
+    ctx.state["user_request"] = node_input
     
     # 1. PII Scrubbing (Regex for phone, SSN, Credit Card)
     scrubbed = node_input
@@ -135,7 +135,7 @@ async def security_checkpoint(ctx: Context, node_input: str) -> str:
         audit_data["severity"] = "CRITICAL"
         audit_data["message"] = "Prompt injection attempt detected!"
         security_logger.error(json.dumps(audit_data))
-        ctx.state.security_status = "VIOLATION"
+        ctx.state["security_status"] = "VIOLATION"
         ctx.route = "SECURITY_EVENT"
         return "Security Violation: Unauthorized command injection."
         
@@ -143,7 +143,7 @@ async def security_checkpoint(ctx: Context, node_input: str) -> str:
         audit_data["severity"] = "WARNING"
         audit_data["message"] = "Spam content detected in request."
         security_logger.warning(json.dumps(audit_data))
-        ctx.state.security_status = "VIOLATION"
+        ctx.state["security_status"] = "VIOLATION"
         ctx.route = "SECURITY_EVENT"
         return "Security Violation: Prohibited spam content."
 
@@ -154,8 +154,8 @@ async def security_checkpoint(ctx: Context, node_input: str) -> str:
     else:
         security_logger.info(json.dumps(audit_data))
         
-    ctx.state.security_status = "SAFE"
-    ctx.state.latest_email = scrubbed
+    ctx.state["security_status"] = "SAFE"
+    ctx.state["latest_email"] = scrubbed
     ctx.route = "SAFE"
     return scrubbed
 
@@ -168,7 +168,7 @@ async def security_event_node(ctx: Context, node_input: str) -> str:
 @node
 async def final_output_node(ctx: Context, node_input: str) -> str:
     """Summarizes actions taken."""
-    status = ctx.state.action_status or "Request completed."
+    status = ctx.state.get("action_status") or "Request completed."
     return f"Secretary Output: {node_input}\nStatus: {status}"
 
 # ---------------------------------------------------------------------------

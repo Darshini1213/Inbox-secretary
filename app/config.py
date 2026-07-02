@@ -15,3 +15,4 @@ class AgentConfig:
     injection_detection_enabled: bool = True
 
 config = AgentConfig()
+print("MODEL:", config.model)

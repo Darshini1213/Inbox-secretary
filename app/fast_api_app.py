@@ -43,12 +43,20 @@ import logging
 import google.auth.exceptions
 
 try:
+    if os.getenv("INTEGRATION_TEST") == "TRUE":
+        raise ValueError("Integration test mode; skipping GCP logging.")
     _, project_id = google.auth.default()
     logging_client = google_cloud_logging.Client()
     logger = logging_client.logger(__name__)
 except Exception:
     project_id = "mock-project"
     logger = logging.getLogger(__name__)
+    try:
+        from google.auth.credentials import AnonymousCredentials
+        import vertexai
+        vertexai.init(project=project_id, credentials=AnonymousCredentials())
+    except Exception:
+        pass
 
 allow_origins = (
     os.getenv("ALLOW_ORIGINS", "").split(",") if os.getenv("ALLOW_ORIGINS") else None
@@ -112,7 +120,10 @@ def collect_feedback(feedback: Feedback) -> dict[str, str]:
     Returns:
         Success message
     """
-    logger.log_struct(feedback.model_dump(), severity="INFO")
+    if hasattr(logger, "log_struct"):
+        logger.log_struct(feedback.model_dump(), severity="INFO")
+    else:
+        logger.info(f"Feedback collected: {feedback.model_dump()}")
     return {"status": "success"}
 
 
